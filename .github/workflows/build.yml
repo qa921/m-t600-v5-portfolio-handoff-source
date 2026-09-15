@@ -1,0 +1,26 @@
+name: build
+on:
+  push:
+    branches:
+      - fix/m-t600-v5-voice-evidence-copy
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run build
+        run: npm run build
+      - name: Verify dist output
+        run: |
+          set -e
+          for f in dist/index.html dist/work/harbor/index.html dist/work/fieldnotes/index.html dist/archive/2024/index.html; do
+            test -f "$f" && echo "OK $f"
+          done
+          echo "--- dist tree ---"
+          find dist -type f | sort
