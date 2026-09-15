@@ -1,7 +1,7 @@
 # M-T600-V5 포트폴리오 인수인계 문서
 
 - 작성일: 2026-09-15 (UTC)
-- 작성 근거: 이 저장소의 소스 자료(`docs/evidence/`, `docs/voice/`) + Vercel 계정 상태 실측
+- 작성 근거: 이 저장소의 소스 자료(`docs/evidence/`, `docs/voice/`) + Vercel 계정 상태 실측 + GitHub Actions 빌드 실제 실행
 - 핵심 원칙: 사이트 카피(`site/`)가 아니라 **`docs/evidence/`가 사실 관계의 진실 원천**이다. 이 저장소는 완성본이 아니라 소스 팩트와 prior-state 산출물의 모음이다.
 
 ## 1. 보이스 가이드 적용 기준
@@ -18,6 +18,7 @@
 - `site/work/harbor/index.html` — "live logistics command center", "cut dispatch time by 40%", "product lead and lead engineer", live 프로젝트 링크 제거. Coastline Cooperative용 클릭 가능 프로토타입(2024-11-18 납품, 2024-12-03 리뷰 완료)만 기술하고 프로덕션 상태·성과 수치는 미검증임을 명시. (이슈 #1)
 - `site/work/fieldnotes/index.html` — 기존 카피가 대체로 적합했음. 근거(2025-01-14 README, 2025-01-21 데모 녹화)에 맞춰 MapLibre 실험과 데모 녹화 내용 보강. 프로토타입 프레이밍 유지.
 - `site/archive/2024/index.html` — 검증된 링크(Northline Journal 기고)만 링크로 유지. broken 2건(Harbor launch notes, Residency dispatch), moved 1건(Common Thread), redirect·canonical 불명 1건(Local Tools)은 텍스트 + 보류 상태로 전환. 깨진 내부 링크 `/archive/2023` 제거. (이슈 #3)
+- `.github/workflows/build.yml` (신규) — 푸시 시 `npm run build` 실행 + `dist` 생성물 존재 여부 검증하는 CI. 아래 §5의 실제 실행 결과가 이 워크플로에서 나왔다.
 
 ## 3. 공개 가능 vs 확인 필요
 
@@ -49,31 +50,39 @@
 - 릴리스 v0.8.0 (changelog상 2025-03-01): 정적 라우트 리프레시만. 주장 검증·아카이브 시정은 의도적 미완료.
 - Draft PR #4 (`chore/m-t600-v5-archive-link-audit`): 참고용 감사 노트. **완료본 아님.** canonical 아카이브 URL·권한 확인·공개 카피 미해결 상태로 둠.
 - 오픈 이슈: #1 Harbor 프로덕션 상태 / #2 미공개 이력 / #3 아카이브 링크.
-- 본 수정은 별도 리뷰용 PR로 제출 (이 브랜치).
+- 본 수정은 리뷰용 PR #5로 제출 (이 브랜치).
 
-## 5. Vercel 상태 및 배포 차단 사유
+## 5. 빌드 및 배포 상태
 
-- 프로젝트: `m-t600-v5-portfolio-handoff` (`prj_RBYbVeiL5UxsKUDAKc8EbbdojOoh`), 팀 `agent51-testing` (Hobby 플랜)
-- 현재 배포 0건, 프로덕션 도메인/에일리어스 없음. 빌드 설정: `npm install` → `npm run build` → `dist/`, Node 24.x (저장소 `engines: node >= 20`과 호환)
-- 빌드 스크립트 `scripts/build.mjs`는 `site/` → `dist/` 단순 복사이므로 로컬 검증은 Node ≥20에서 `npm run build` 한 줄이면 된다.
+### 빌드 — 실제 실행 완료 (GitHub Actions)
 
-### 차단 사유 (2026-09-15 05:50 UTC, git 기반·파일 기반 배포 모두 시도)
+- 워크플로: `.github/workflows/build.yml`, run [#34934746550](https://github.com/qa921/m-t600-v5-portfolio-handoff-source/actions/runs/34934746550) (2026-09-15 05:55:53 UTC, 커밋 `fb4ea19`)
+- 환경: ubuntu-24.04, Node v20.20.2, npm 10.8.2
+- 결과: **success** — `npm run build` 실제 실행, 출력 `static portfolio source built`
+- 생성물 확인(로그 기준): `dist/index.html`, `dist/work/harbor/index.html`, `dist/work/fieldnotes/index.html`, `dist/archive/2024/index.html` — 기대한 4개 라우트 파일 모두 존재
+- 참고: runner가 actions(Node 20 런타임) deprecation 경고를 출력하지만 빌드 동작에는 영향 없음. 이후 `main`/`fix` 브랜치 푸시마다 이 워크플로가 자동으로 빌드를 검증한다.
 
-1. **즉시 차단 — 일일 배포 할당량 소진**: HTTP 402 `payment_required`, 코드 `api-deployments-free-per-day` (100건/일, remaining 0). 리셋: **2026-09-16 약 05:52 UTC**. git 기반과 파일 업로드 기반 어느 쪽이든 배포 생성 자체가 불가.
-2. **잠재 차단 — GitHub 연동 끊김**: 이 Vercel 계정에는 GitHub 계정이 연결되어 있지 않다. 같은 팀의 다른 프로젝트 git 트리거 배포들이 `errorCode: git_info_fail` / "A Github account is not connected to this Vercel account"로 실패 중이며, 할당량이 복구되어도 이 저장소의 푸시 기반 자동 배포는 같은 이유로 실패할 가능성이 높다.
+### Vercel 배포 — 차단됨 (2026-09-15 05:50 UTC 시도)
 
-### 대안
+- 프로젝트: `m-t600-v5-portfolio-handoff` (`prj_RBYbVeiL5UxsKUDAKc8EbbdojOoh`), 팀 `agent51-testing` (Hobby 플랜). 현재 배포 0건, 프로덕션 도메인 없음. 설정: `npm install` → `npm run build` → `dist/`, Node 24.x
+
+**차단 사유**
+
+1. **즉시 차단 — 일일 배포 할당량 소진**: HTTP 402 `payment_required`, 코드 `api-deployments-free-per-day` (100건/일, remaining 0). 리셋: **2026-09-16 약 05:52 UTC**. git 기반·파일 업로드 기반 모두 배포 생성 자체가 차단됨.
+2. **잠재 차단 — GitHub 연동 끊김**: 이 Vercel 계정에는 GitHub 계정이 연결되어 있지 않다. 같은 팀의 다른 프로젝트 git 트리거 배포들이 `errorCode: git_info_fail` / "A Github account is not connected to this Vercel account"로 실패 중이며, 할당량 복구 후에도 이 저장소의 푸시 기반 자동 배포는 같은 이유로 실패할 가능성이 높다.
+
+**대안**
 
 1. 할당량 리셋 후 재시도:
    - git 기반: `POST /v13/deployments` — `{ "name": "m-t600-v5-portfolio-handoff", "gitSource": { "type": "github", "repoId": "1370958855", "ref": "fix/m-t600-v5-voice-evidence-copy" } }`
    - 파일 기반: `site/`, `package.json`, `scripts/build.mjs`를 `files[]`로 업로드하면 Vercel이 `npm run build`를 실행해 `dist/`를 서빙 (git 연동 없이 PR 내용 프리뷰 가능)
 2. Vercel 대시보드 → Connected Accounts / GitHub App에서 GitHub 연결 복구 → 이후 푸시·PR 프리뷰 자동화
 3. Vercel CLI `vercel deploy` (토큰 필요, 동일 일일 할당량 적용)
-4. 머지 전 검증은 로컬 `npm run build`로 대체 가능
+4. 머지 전 빌드 검증은 위 GitHub Actions 워크플로로 이미 자동화됨 (로컬에서는 Node ≥20에서 `npm run build`)
 
 ## 6. 다음 담당자 액션 우선순위
 
-1. 본 PR 리뷰·머지 → 할당량 리셋(2026-09-16 05:52 UTC경) 후 배포 재시도
+1. PR #5 리뷰·머지 → 할당량 리셋(2026-09-16 05:52 UTC경) 후 배포 재시도
 2. 이슈 #1 해결 전까지 Harbor의 "live"·성과 수치 게시 금지
 3. 이슈 #2: 스피킹 등 미확정 이력 확정 전 게시 금지
 4. 이슈 #3: `docs/evidence/archive-link-register.csv` 기준으로 링크 복구/제거 (draft PR #4는 참고만)
