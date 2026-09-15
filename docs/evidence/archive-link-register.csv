@@ -1,0 +1,10 @@
+item,date,display_title,source_url,status,notes
+17,2024-02-11,Harbor launch notes,https://archive.example.org/rin/harbor-launch,broken,originally a private project page; title confirmed in export
+18,2024-03-08,Residency dispatch,https://archive.example.org/rin/residency,broken,scanned PDF exists in old-drive index
+19,2024-04-06,Mapping after the storm,https://northline.example.org/mapping-after-storm,verified,byline source
+20,2024-05-19,Participatory mapping conversation,https://commonthread.example.org/episodes/44,moved,transcript file named common-thread-44.txt
+21,2024-08-15,Local Tools interview,https://localtools.example.org/interviews/rin,redirect,canonical destination unknown
+22,2023-11-28,Field Notes prototype,https://fieldnotes.example.org,unverified,domain not controlled
+23,2024-10-02,Night Index sketches,https://archive.example.org/rin/night-index,missing,no public permission record
+24,2025-01-14,Field Notes repository,https://github.com/qa921/m-t600-v5-portfolio-handoff-source,verified,repository contains source fixture only
+25,2025-02-13,Open Transit proposal,https://opentransit.example.org/proposal,unverified,shortlist note only
