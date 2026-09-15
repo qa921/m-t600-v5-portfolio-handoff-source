@@ -1,0 +1,1 @@
+{"name":"m-t600-v5-portfolio-handoff-source","private":true,"version":"0.8.0","scripts":{"build":"node scripts/build.mjs","preview":"node scripts/build.mjs"},"engines":{"node":">=20"}}
