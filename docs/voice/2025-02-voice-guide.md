@@ -1,0 +1,3 @@
+# Voice guide — 2025-02 (current)
+
+Use plain, specific sentences. Lead with what was made, the collaborator or setting when confirmed, and the medium. Prefer “contributed to”, “worked with”, and “prototype” when scope is limited. Describe outcomes only where a dated source gives a measure. Do not use superlatives, audience claims, “global”, “award-winning”, “AI transformation”, or career totals without evidence. Preserve route URLs; concise captions are preferred.
